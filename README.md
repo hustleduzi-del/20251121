@@ -81,3 +81,16 @@ Override any of the inputs to run custom scenarios:
 python monte_carlo.py --spot 95 --strike 90 --maturity 0.5 \
   --rate 0.04 --volatility 0.25 --steps 12 --simulations 50000 --option-type put
 ```
+
+## 웹 몬테카를로 옵션 계산기
+
+Flask 기반 웹 서버를 통해 Monte Carlo 옵션 가격을 직접 계산할 수 있습니다. 첫 페이지에서 사용법과 입력 양식을 바로 확인할 수 있도록 구성했습니다.
+
+### 실행 방법
+
+```bash
+pip install -r requirements.txt
+python app.py
+```
+
+브라우저에서 `http://localhost:5000`으로 이동한 후 원하는 입력값을 넣고 **가격 계산**을 누르면 결과가 표시됩니다. Spot, Strike, 만기, 무위험 이자율, 변동성, 시뮬레이션 수, 시간 구간(steps), 콜/풋 타입, 그리고 필요하다면 시드값을 모두 웹에서 입력할 수 있습니다.
