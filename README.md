@@ -3,7 +3,7 @@
 Python implementation of the Cox–Ross–Rubinstein binomial option pricing model. It
 supports both European and American call/put options via a simple API.
 
-## Usage
+## Binomial model usage
 
 ```python
 from binomial_model import OptionSpec, binomial_price
@@ -27,4 +27,40 @@ You can also run the module directly to see a small example:
 
 ```bash
 python binomial_model.py
+```
+
+## Monte Carlo pricing with custom payoffs
+
+```python
+from monte_carlo import (
+    MonteCarloSpec,
+    european_call_payoff,
+    monte_carlo_price,
+)
+
+spec = MonteCarloSpec(
+    spot=100,
+    maturity=1.0,
+    rate=0.05,
+    volatility=0.2,
+    simulations=50_000,
+)
+
+call_price = monte_carlo_price(spec, european_call_payoff(strike=100))
+print(call_price)
+
+# Define a custom payoff: fixed cash flow if the average price stays above 90
+
+def average_above_90(path: list[float]) -> float:
+    return 10.0 if sum(path) / len(path) > 90 else 0.0
+
+custom_price = monte_carlo_price(spec, average_above_90)
+print(custom_price)
+```
+
+Running the module directly prints Monte Carlo prices for example European and
+Asian payoffs:
+
+```bash
+python monte_carlo.py
 ```
