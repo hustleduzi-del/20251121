@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Monte Carlo Option Calculator</title>
+    <style>
+        :root { font-family: system-ui, -apple-system, sans-serif; background: #f6f8fb; color: #1f2933; }
+        body { max-width: 960px; margin: 0 auto; padding: 24px; }
+        header { margin-bottom: 20px; }
+        h1 { margin: 0 0 8px; }
+        .card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 16px; }
+        form { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+        label { font-weight: 600; display: block; margin-bottom: 6px; }
+        input, select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd2d9; box-sizing: border-box; }
+        button { background: #2563eb; color: white; border: none; padding: 12px 16px; border-radius: 10px; cursor: pointer; font-size: 16px; grid-column: 1 / -1; }
+        button:hover { background: #1d4ed8; }
+        .result { font-size: 18px; font-weight: 700; }
+        .error { color: #b00020; font-weight: 700; }
+        ul { margin: 8px 0 0 20px; }
+        .muted { color: #52606d; font-size: 14px; }
+        footer { margin-top: 24px; color: #52606d; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Monte Carlo 웹 옵션 계산기</h1>
+        <p class="muted">아래 입력값을 수정한 뒤 "가격 계산"을 누르면 몬테카를로 시뮬레이션으로 옵션 가격을 계산합니다. 모든 계산은 <code>monte_carlo.py</code> 모듈을 그대로 사용하며, 첫 화면에서 사용법과 설명을 바로 확인할 수 있도록 구성했습니다.</p>
+    </header>
+
+    <section class="card">
+        <h2>빠른 사용법</h2>
+        <ul>
+            <li>Spot, Strike, Maturity(년), Rate(연 이자율), Volatility(연 변동성)를 원하는 값으로 입력합니다.</li>
+            <li>Simulations는 시뮬레이션 경로 수, Steps는 경로 내 시간 구간 수입니다.</li>
+            <li>Option Type을 Call/Put 중 선택하고, Seed를 입력하면 같은 결과를 재현할 수 있습니다.</li>
+            <li>"가격 계산"을 누르면 결과 카드에 할인된 옵션 가치가 표시됩니다.</li>
+        </ul>
+    </section>
+
+    <section class="card">
+        <h2>입력값</h2>
+        {% if error %}
+            <div class="error">입력 오류: {{ error }}</div>
+        {% endif %}
+        <form action="{{ url_for('price') }}" method="post">
+            <div>
+                <label for="spot">Spot</label>
+                <input type="number" step="any" name="spot" id="spot" value="{{ defaults.spot }}" required>
+            </div>
+            <div>
+                <label for="strike">Strike</label>
+                <input type="number" step="any" name="strike" id="strike" value="{{ defaults.strike }}" required>
+            </div>
+            <div>
+                <label for="maturity">Maturity (년)</label>
+                <input type="number" step="any" name="maturity" id="maturity" value="{{ defaults.maturity }}" required>
+            </div>
+            <div>
+                <label for="rate">Risk-free Rate</label>
+                <input type="number" step="any" name="rate" id="rate" value="{{ defaults.rate }}" required>
+            </div>
+            <div>
+                <label for="volatility">Volatility</label>
+                <input type="number" step="any" name="volatility" id="volatility" value="{{ defaults.volatility }}" required>
+            </div>
+            <div>
+                <label for="simulations">Simulations</label>
+                <input type="number" step="1" min="1" name="simulations" id="simulations" value="{{ defaults.simulations }}" required>
+            </div>
+            <div>
+                <label for="steps">Steps</label>
+                <input type="number" step="1" min="1" name="steps" id="steps" value="{{ defaults.steps }}" required>
+            </div>
+            <div>
+                <label for="option_type">Option Type</label>
+                <select name="option_type" id="option_type">
+                    <option value="call" {% if defaults.option_type == 'call' %}selected{% endif %}>Call</option>
+                    <option value="put" {% if defaults.option_type == 'put' %}selected{% endif %}>Put</option>
+                </select>
+            </div>
+            <div>
+                <label for="seed">Seed (선택)</label>
+                <input type="number" step="1" name="seed" id="seed" value="{{ defaults.seed }}" placeholder="예: 12345">
+            </div>
+            <button type="submit">가격 계산</button>
+        </form>
+    </section>
+
+    {% if result %}
+    <section class="card">
+        <h2>결과</h2>
+        <p class="result">계산된 옵션 가격: {{ result.price | round(6) }}</p>
+        <p class="muted">입력 요약: Spot {{ result.spot }}, Strike {{ result.strike }}, Maturity {{ result.maturity }}, Rate {{ result.rate }}, Volatility {{ result.volatility }}, Steps {{ result.steps }}, Simulations {{ result.simulations }}, Type {{ result.option_type }}{% if result.seed %}, Seed {{ result.seed }}{% endif %}</p>
+    </section>
+    {% endif %}
+
+    <footer>
+        Flask 서버를 실행하려면 <code>pip install -r requirements.txt</code> 후 <code>python app.py</code> 명령을 실행하세요. 서버는 <code>http://localhost:5000</code>에서 실행됩니다.
+    </footer>
+</body>
+</html>
