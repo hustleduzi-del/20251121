@@ -64,3 +64,20 @@ Asian payoffs:
 ```bash
 python monte_carlo.py
 ```
+
+### Command-line pricing for European options
+
+You can also pass option parameters on the command line. Defaults mirror the
+examples above, so running without flags prices a one-year at-the-money call on
+an asset priced at 100 with 20% volatility and a 5% risk-free rate:
+
+```bash
+python monte_carlo.py
+```
+
+Override any of the inputs to run custom scenarios:
+
+```bash
+python monte_carlo.py --spot 95 --strike 90 --maturity 0.5 \
+  --rate 0.04 --volatility 0.25 --steps 12 --simulations 50000 --option-type put
+```

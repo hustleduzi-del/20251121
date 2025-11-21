@@ -13,6 +13,8 @@ import random
 from dataclasses import dataclass
 from typing import Callable, Sequence
 
+import argparse
+
 
 @dataclass(frozen=True)
 class MonteCarloSpec:
@@ -75,6 +77,24 @@ def monte_carlo_price(spec: MonteCarloSpec, payoff_fn: Callable[[Sequence[float]
     return discount_factor * expected_payoff
 
 
+def price_european_option(
+    spec: MonteCarloSpec,
+    strike: float,
+    option_type: str = "call",
+) -> float:
+    """Convenience helper to price a European call or put via Monte Carlo."""
+
+    option_type = option_type.lower()
+    if option_type == "call":
+        payoff_fn = european_call_payoff(strike)
+    elif option_type == "put":
+        payoff_fn = european_put_payoff(strike)
+    else:
+        raise ValueError("option_type must be 'call' or 'put'")
+
+    return monte_carlo_price(spec, payoff_fn)
+
+
 def european_call_payoff(strike: float) -> Callable[[Sequence[float]], float]:
     """Factory for a European call payoff using the terminal price."""
 
@@ -127,5 +147,68 @@ def example() -> None:
     print(f"Asian call     (MC): {asian_price:.4f}")
 
 
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Price a European option via Monte Carlo simulation",
+    )
+    parser.add_argument("--spot", type=float, default=100.0, help="Current underlying price")
+    parser.add_argument("--strike", type=float, default=100.0, help="Option strike price")
+    parser.add_argument("--maturity", type=float, default=1.0, help="Time to maturity in years")
+    parser.add_argument("--rate", type=float, default=0.05, help="Risk-free rate (annualized)")
+    parser.add_argument("--volatility", type=float, default=0.2, help="Volatility (annualized)")
+    parser.add_argument(
+        "--simulations",
+        type=int,
+        default=20_000,
+        help="Number of Monte Carlo paths to simulate",
+    )
+    parser.add_argument(
+        "--steps",
+        type=int,
+        default=1,
+        help="Number of time steps in each simulated path",
+    )
+    parser.add_argument(
+        "--option-type",
+        choices=("call", "put"),
+        default="call",
+        help="Payoff type to price",
+    )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help="Optional RNG seed for reproducible prices",
+    )
+
+    return parser.parse_args(argv)
+
+
+def main(argv: Sequence[str] | None = None) -> None:
+    args = parse_args(argv)
+    spec = MonteCarloSpec(
+        spot=args.spot,
+        maturity=args.maturity,
+        rate=args.rate,
+        volatility=args.volatility,
+        simulations=args.simulations,
+        steps=args.steps,
+        seed=args.seed,
+    )
+    price = price_european_option(spec, strike=args.strike, option_type=args.option_type)
+
+    print("Monte Carlo price for a European {opt} option".format(opt=args.option_type))
+    print(f"  Spot:        {args.spot}")
+    print(f"  Strike:      {args.strike}")
+    print(f"  Maturity:    {args.maturity}")
+    print(f"  Rate:        {args.rate}")
+    print(f"  Volatility:  {args.volatility}")
+    print(f"  Steps:       {args.steps}")
+    print(f"  Simulations: {args.simulations}")
+    if args.seed is not None:
+        print(f"  Seed:        {args.seed}")
+    print(f"  Price:       {price:.4f}")
+
+
 if __name__ == "__main__":
-    example()
+    main()
