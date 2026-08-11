@@ -1,96 +1,16 @@
-# 20251121
+# 📰 퇴직연금 최신 뉴스 요약
 
-Python implementation of the Cox–Ross–Rubinstein binomial option pricing model. It
-supports both European and American call/put options via a simple API.
+> **최종 업데이트:** 2026년 08월 11일 09:07 (KST 기준)
 
-## Binomial model usage
+### 📌 주요 뉴스 Top 10
 
-```python
-from binomial_model import OptionSpec, binomial_price
-
-spec = OptionSpec(
-    spot=100,
-    strike=100,
-    maturity=1.0,
-    rate=0.05,
-    volatility=0.2,
-    steps=100,
-    option_type="call",
-    exercise="american",
-)
-
-price = binomial_price(spec)
-print(price)
-```
-
-You can also run the module directly to see a small example:
-
-```bash
-python binomial_model.py
-```
-
-## Monte Carlo pricing with custom payoffs
-
-```python
-from monte_carlo import (
-    MonteCarloSpec,
-    european_call_payoff,
-    monte_carlo_price,
-)
-
-spec = MonteCarloSpec(
-    spot=100,
-    maturity=1.0,
-    rate=0.05,
-    volatility=0.2,
-    simulations=50_000,
-)
-
-call_price = monte_carlo_price(spec, european_call_payoff(strike=100))
-print(call_price)
-
-# Define a custom payoff: fixed cash flow if the average price stays above 90
-
-def average_above_90(path: list[float]) -> float:
-    return 10.0 if sum(path) / len(path) > 90 else 0.0
-
-custom_price = monte_carlo_price(spec, average_above_90)
-print(custom_price)
-```
-
-Running the module directly prints Monte Carlo prices for example European and
-Asian payoffs:
-
-```bash
-python monte_carlo.py
-```
-
-### Command-line pricing for European options
-
-You can also pass option parameters on the command line. Defaults mirror the
-examples above, so running without flags prices a one-year at-the-money call on
-an asset priced at 100 with 20% volatility and a 5% risk-free rate:
-
-```bash
-python monte_carlo.py
-```
-
-Override any of the inputs to run custom scenarios:
-
-```bash
-python monte_carlo.py --spot 95 --strike 90 --maturity 0.5 \
-  --rate 0.04 --volatility 0.25 --steps 12 --simulations 50000 --option-type put
-```
-
-## 웹 몬테카를로 옵션 계산기
-
-Flask 기반 웹 서버를 통해 Monte Carlo 옵션 가격을 직접 계산할 수 있습니다. 첫 페이지에서 사용법과 입력 양식을 바로 확인할 수 있도록 구성했습니다.
-
-### 실행 방법
-
-```bash
-pip install -r requirements.txt
-python app.py
-```
-
-브라우저에서 `http://localhost:5000`으로 이동한 후 원하는 입력값을 넣고 **가격 계산**을 누르면 결과가 표시됩니다. Spot, Strike, 만기, 무위험 이자율, 변동성, 시뮬레이션 수, 시간 구간(steps), 콜/풋 타입, 그리고 필요하다면 시드값을 모두 웹에서 입력할 수 있습니다.
+1. [목돈 필요해도 IRP로 퇴직금 받는게 ‘상책’ - v.daum.net](https://news.google.com/rss/articles/CBMiT0FVX3lxTE1abW1xdU1JdC1LZXJiWm44ZzFWMFI0N09HZHFtVVAtSDE4Mms3c0I5ZWtNVkllNmtvSktwbFRNNlVQa2lOR2dYbkprVVgwaVk?oc=5)
+2. [기금형 퇴직연금 국회가 제시한 세 가지 해법 - 이투데이](https://news.google.com/rss/articles/CBMiWkFVX3lxTE5HX2h0RjJ5Y0t2YUxQb2dod1NMUHR1dzlrdkdIQm00NFE3TjFqSGI0S3BNVVEyalRJbzZBUUJQMktEUzFWa1JhUVcxU0JaR0xZOHRKWklZRE1Qdw?oc=5)
+3. [증권사 웃는데… 은행권 '눈물의 퇴직연금' - 머니투데이 - 머니투데이](https://news.google.com/rss/articles/CBMia0FVX3lxTFBrc2NKemxaS3BhbmtGRi1YekdLa0Vkem9FRlJDQ2Voay1rbTk5em5xdjIxVGJRbDBFRDZ0eUxKLW5kRFhjWl95bHlOU3ktMDR1WDJfZWJvQW53eFhxd3BnNDhrZ0N6a2ZESjRF0gFwQVVfeXFMTUxxdHlGYU5DaTRFZk9tQi1xQ3E0SmVUNkhqWWZJV3hkT25GUHNxYXBGTEFFaHdZc0pzd2NSU3REZWtrVFJPVGVLcUQ4c3g0UGhqNlRtNFVERG8xWXBMZmdlX2xCZU9XV05GTEp1X0dWMA?oc=5)
+4. ['알아서 비중조절' TDF, 퇴직연금 안착 - 매일경제 마켓](https://news.google.com/rss/articles/CBMiUkFVX3lxTFBDaGk2c05pQjVMaWFKMUVIaFdVUGdwdDlpRWJNajdXcGtwTWh1NGhjSGpRNFJnNFpvbnBYQmhGc0tWcXliT2g4SXA3WHhVSnBYSGc?oc=5)
+5. [주식 40%·채권 30% 공식 버린 美 최대 연기금…연기금 ‘자산배분 공식’ 깨진다 - 조선일보](https://news.google.com/rss/articles/CBMigAFBVV95cUxQY1YyLWFrZ3Ytb3B3MWtOV0NuTnpQZEZ4UXBRT0JfX0hyMEk5TGJfTVRmUzJROEZ5bG55bWRmZXVaUU9JaGgxRU9qSmE2VU5BRHdZbGdiOHd6LXpxUUQzekxLS2ZhclU3NUdrZUYwSGZxcG96UmhvcTJJVTRteG1hQg?oc=5)
+6. [브이아이운용, '금·반·지' 채권혼합 ETF 상장…퇴직연금 100% 투자 가능 - newspim.com](https://news.google.com/rss/articles/CBMiXEFVX3lxTE9xNTdicHJFTHlKcXYyWnVKTEdoM2VuOW9qbWZZTXZGYzhVZW1UMzJGazNkUFZWaXA1VEwtaTNwTUx1UmVmVTRIeU5BT1E5N0NFcFpnYk0ybTBfRzNh?oc=5)
+7. [2% 수익률의 미스터리: '현행 제도'의 한계[김병철의 퇴직연금 개혁 시나리오] - 네이트](https://news.google.com/rss/articles/CBMiU0FVX3lxTE5fY29SbWlLSUt4WGRaU3JXSnUxaENkbERSUC1BNk1hTEI5VnVfXzZlRkxwV25XQVNrYW5MMDdSdTdPcE90VTliMnEyNE9EUUlyUFY0?oc=5)
+8. [[사설] 국민연금의 퇴직연금 시장 진출, 정치적 편향성 제거가 먼저 - 대한경제](https://news.google.com/rss/articles/CBMidEFVX3lxTE1qX0hOMGRXWmUtc1ZjMHFHQkZMT1dNTHFiWWF6MG0xWmw4U3BXUnN2TjExUDZmaHItQjBIM1FPc0t6NHFpci1wb1FuMFA1YlFwREQxdGhacjQ1RnJhS3RZbzJEaURLa2thUXpXWm5IakpsellJ?oc=5)
+9. [“연금머니 잡아라”…증권사, 운용부터 상담까지 서비스 경쟁 - 뉴스투데이](https://news.google.com/rss/articles/CBMiXkFVX3lxTE4tdFhGNTVDY0lNSXJZc0RNbXp6REVPRWpoZS1FT19sdDNzMV9wSmJ1eW45V3VvTjZZbGFsSkR5bFppR3ctanFxWFVnZDFkNnVRa0wybE1JYWNZSU4xTlE?oc=5)
+10. [[AI에 자산 맡기는 시대①] 증권사 RA 경쟁 치열…연금부터 일반계좌까지 영토 확장 - 녹색경제신문](https://news.google.com/rss/articles/CBMiaEFVX3lxTE5lcWx1MmlDVXRGb1dzcmM4engwaUVwRjZ1WVlVN1FGUnhPUzlNVlNJNFN1TU9iS2UxYmx1NVZUUkR1cGJyemlTN2RfWVJxak1lQVg1NDBJVVFHN05TcWhFS2lQVllxSW00?oc=5)
